@@ -42,6 +42,7 @@ class FeedsController extends Controller
                 'id' => $f->id,
                 'title' => $f->title,
                 'description' => $f->description,
+                'time' => Carbon::parse($f->created_at)->toDayDateTimeString(),
                 'amount' => $f->transaction->amount,
                 'likes' => $f->likeCount(),
                 'likedByMe' => $likedByMe,
