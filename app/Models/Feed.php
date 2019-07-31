@@ -9,6 +9,7 @@ class Feed extends MomonationBaseModel {
         'receiver',
         'title',
         'description',
+        'transaction_id',
     ];
 
     public function senderUser() {
@@ -33,5 +34,9 @@ class Feed extends MomonationBaseModel {
         } catch (\Exception $e) {
             return 0;
         }
+    }
+
+    public function transaction() {
+        return $this->belongsTo('App\Models\Transaction');
     }
 }

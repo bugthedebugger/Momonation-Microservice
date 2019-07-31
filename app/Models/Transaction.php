@@ -17,4 +17,8 @@ class Transaction extends MomonationBaseModel {
     public function receiver() {
         return $this->belongsTo('App\User', 'receiver');
     }
+
+    public function feed() {
+        return $this->hasOne('App\Models\Feed');
+    }
 }

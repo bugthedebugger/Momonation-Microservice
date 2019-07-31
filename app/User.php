@@ -40,4 +40,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function asReceiverFeed() {
         return $this->hasMany('App\Models\Feed', 'receiver');
     }
+
+    public function comments() {
+        return $this->hasMany('App\Models\Comment');
+    }
+
+    public function likes() {
+        return $this->hasMany('App\Models\Like');
+    }
+
+    public function bank() {
+        return $this->hasOne('App\Models\Momobank');
+    }
 }

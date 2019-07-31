@@ -29,6 +29,6 @@ class CreateMomobankTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('momobank');
+        Schema::connection('momonation')->dropIfExists('momobank');
     }
 }

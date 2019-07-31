@@ -30,6 +30,6 @@ class CreateFeedsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('feeds');
+        Schema::connection('momonation')->dropIfExists('feeds');
     }
 }

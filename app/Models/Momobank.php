@@ -4,6 +4,9 @@ namespace App\Models;
 use App\Models\MomonationBaseModel;
 
 class Momobank extends MomonationBaseModel {
+
+    protected $table = 'momobank';
+
     protected $fillable = [
         'user_id',
         'raw',
