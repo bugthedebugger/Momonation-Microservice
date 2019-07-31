@@ -11,11 +11,11 @@ class Feed extends MomonationBaseModel {
         'description',
     ];
 
-    public function sender() {
+    public function senderUser() {
         return $this->belongsTo('App\User', 'sender');
     }
 
-    public function receiver() {
+    public function receiverUser() {
         return $this->belongsTo('App\User', 'receiver');
     }
 

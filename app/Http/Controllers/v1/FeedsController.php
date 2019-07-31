@@ -25,8 +25,8 @@ class FeedsController extends Controller
                 'title' => $f->title,
                 'description' => $f->description,
                 'likes' => $f->likeCount(),
-                'sender' => User::find($f->sender),
-                'receiver' => User::find($f->receiver),
+                'sender' => $f->senderUser,
+                'receiver' => $f->receiverUser,
             ];
         }
         return response()->json($parsedFeeds);

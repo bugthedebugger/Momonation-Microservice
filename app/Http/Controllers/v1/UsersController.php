@@ -17,7 +17,7 @@ class UsersController extends Controller
     }
 
     public function users() {
-        $users = User::all();
+        $users = User::find(1)->asSenderFeed;
         return response()->json($users);
     }
 }

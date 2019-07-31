@@ -13,6 +13,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable, Authorizable, HasApiTokens;
 
+    protected $connection = 'mysql';
+
     /**
      * The attributes that are mass assignable.
      *
