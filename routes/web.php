@@ -20,4 +20,5 @@ $router->group(['middleware' => 'auth', 'prefix' => '/api/v1/'], function() use 
     $router->get('/users', ['as' => 'users', 'uses' => 'v1\UsersController@users']);
     $router->get('/feed', ['as' => 'momonation.feed', 'uses' => 'v1\FeedsController@allFeed']);
     $router->post('/transfer', ['as' => 'momonation.transfer', 'uses' => 'v1\MomoBankController@transfer']);
+    $router->put('/comment', ['as' => 'comment', 'uses' => 'v1\CommentsController@store']);
 });
