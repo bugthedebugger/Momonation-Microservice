@@ -21,4 +21,6 @@ $router->group(['middleware' => 'auth', 'prefix' => '/api/v1/'], function() use 
     $router->get('/feed', ['as' => 'momonation.feed', 'uses' => 'v1\FeedsController@allFeed']);
     $router->post('/transfer', ['as' => 'momonation.transfer', 'uses' => 'v1\MomoBankController@transfer']);
     $router->put('/comment', ['as' => 'comment', 'uses' => 'v1\CommentsController@store']);
+    $router->put('/feed/like', ['as' => 'feed.like', 'uses' => 'v1\LikesController@like']);
+    $router->delete('/feed/unlike', ['as' => 'feed.like', 'uses' => 'v1\LikesController@unlike']);
 });

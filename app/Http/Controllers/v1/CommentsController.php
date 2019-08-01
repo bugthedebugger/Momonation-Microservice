@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\v1;
 use App\Http\Controllers\Controller;
-use App\User;
 use App\Models\Feed;
-use Carbon\Carbon;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Comment;
