@@ -6,23 +6,19 @@ use App\User;
 use App\Models\Momobank;
 use App\Models\Transaction;
 use App\Models\Feed;
+use App\Models\Setting;
 
 class BankHelper {
     public static function createBankAccount(User $user) {
         $bank = null;
-        if($user->bank != null)
+        if($user->bank != null) {
             return $user->bank;
-        try {
-            \DB::beginTransaction();
-            $bank = $user->bank()->create([
-                'raw' => env('DEFAULT_RAW_MOMO'),
-                'cooked' => 0,
-            ]);
-            \DB::commit();
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return null;
         }
+        $settings = Setting::first();
+        $bank = $user->bank()->create([
+            'raw' => $settings->initialization_limit,
+            'cooked' => 0,
+        ]);
         return $bank;
     }     
 
@@ -36,19 +32,20 @@ class BankHelper {
         $receiver->save();
         $sender->raw = $sender->raw - $amount;
         $sender->save();
-        $transaction = BankHelper::writeTransaction($sender, $receiver, $amount);
+        $transaction = BankHelper::writeTransaction($sender, $receiver, $amount, true);
 
         return $transaction;
     }
 
-    private static function writeTransaction(Momobank $sender, Momobank $receiver, $amount) {
+    public static function writeTransaction(Momobank $sender = null, Momobank $receiver, $amount, $by_user=false) {
         
         $transaction = -1;
 
         $transaction = Transaction::create([
-            'sender' => $sender->user->id,
+            'sender' => $sender == null? null: $sender->user->id,
             'receiver' => $receiver->user->id,
             'amount' => $amount,
+            'by_user' => $by_user,
         ]);
 
         return $transaction->id;
@@ -65,5 +62,14 @@ class BankHelper {
         ]);
         
         return $feed;
+    }
+
+    public static function systemTransfer(User $receiver, $amount) {
+
+        $receiver->cooked = $receiver->cooked + $amount;
+        $receiver->save();
+        $transaction = BankHelper::writeTransaction(null, $receiver, $amount, false);
+
+        return $transaction;
     }
 }

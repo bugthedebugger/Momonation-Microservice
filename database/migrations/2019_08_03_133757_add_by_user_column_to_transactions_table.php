@@ -14,7 +14,7 @@ class AddByUserColumnToTransactionsTable extends Migration
     public function up()
     {
         Schema::connection('momonation')->table('transactions', function (Blueprint $table) {
-            $table->boolean('by_user')->default(true);
+            $table->boolean('by_user')->default(false);
         });
     }
 

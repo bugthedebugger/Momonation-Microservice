@@ -19,6 +19,8 @@ class CreateSettingsTable extends Migration
             $table->integer('momo_transfer_limit');
             $table->integer('auto_refill_limit');
             $table->integer('initialization_limit');
+            $table->integer('max_momo_limit');  
+            $table->integer('redeem_limit');
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ class CreateSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('settings');
+        Schema::connection('momonation')->dropIfExists('settings');
     }
 }

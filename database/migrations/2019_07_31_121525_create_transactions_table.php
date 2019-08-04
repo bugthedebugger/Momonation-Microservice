@@ -15,7 +15,7 @@ class CreateTransactionsTable extends Migration
     {
         Schema::connection('momonation')->create('transactions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('sender');
+            $table->bigInteger('sender')->nullable();
             $table->bigInteger('receiver');
             $table->bigInteger('amount');
             $table->timestamps();
