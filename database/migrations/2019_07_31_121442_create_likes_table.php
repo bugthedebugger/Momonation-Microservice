@@ -14,6 +14,7 @@ class CreateLikesTable extends Migration
     public function up()
     {
         Schema::connection('momonation')->create('likes', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->softDeletes();
             $table->bigInteger('feed_id');

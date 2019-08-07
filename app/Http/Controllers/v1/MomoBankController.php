@@ -7,6 +7,8 @@ use App\Models\Momobank;
 use Illuminate\Http\Request;
 use App\User;
 use Auth;
+use App\Models\Transaction;
+use Illuminate\Support\Facades\DB;
 
 class MomoBankController extends Controller
 {
@@ -66,18 +68,46 @@ class MomoBankController extends Controller
         if ($receiverBank == null)
             return response()->json('Could not find receiver bank account.', 500);
 
+        /*
         try{
             \DB::beginTransaction();
             $transaction = BankHelper::transfer($authBank, $receiverBank, $amount);
             if ($transaction != -1) {
                 BankHelper::writeFeed($authUser, $receiver, $request->input('title'), 
                     $request->input('description'), $transaction);
-                \DB::commit();
-            } else {
-                \DB::rollback();
-            }
+            } 
+            \DB::rollback();
         } catch (\Exception $e) {
             \DB::rollback();
+            \Log::error($e);
+            return response()->json('Could not deliver the Mo:Mo', 500);
+        }
+        */
+        DB::beginTransaction();
+        try {
+            if($authBank->raw < $amount)
+                return response()->json('You do not have enough raw Mo:Mo', 406);
+            $receiverBank->cooked = $receiverBank->cooked + $amount;
+            $authBank->raw = $authBank->raw - $amount;
+            $receiverBank->save();
+            $authBank->save();
+            $transaction = Transaction::create([
+                'sender' => $authUser->id,
+                'receiver' => $receiver->id,
+                'amount' => $amount,
+                'by_user' => true,
+                'cooked' => true,
+            ]);
+            $transaction->feed()->create([
+                'sender' => $authUser->id,
+                'receiver' => null,
+                'title' => $request->input('title'),
+                'description' => $request->input('description'),
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error($e);
             return response()->json('Could not deliver the Mo:Mo', 500);
         }
         return response()->json('Successfully delivered ' . $amount . ' cooked Mo:Mo');

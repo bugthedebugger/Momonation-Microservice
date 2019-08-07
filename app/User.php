@@ -52,4 +52,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function bank() {
         return $this->hasOne('App\Models\Momobank');
     }
+
+    public function receivedTransactions() {
+        return $this->hasMany('App\Models\Transaction', 'receiver');
+    }
 }

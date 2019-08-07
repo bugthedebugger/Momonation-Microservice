@@ -14,6 +14,7 @@ class CreateFeedsTable extends Migration
     public function up()
     {
         Schema::connection('momonation')->create('feeds', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->bigInteger('sender');
             $table->bigInteger('receiver');

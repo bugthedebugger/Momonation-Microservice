@@ -14,6 +14,7 @@ class CreateTransactionsTable extends Migration
     public function up()
     {
         Schema::connection('momonation')->create('transactions', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->bigInteger('sender')->nullable();
             $table->bigInteger('receiver');

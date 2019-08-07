@@ -14,6 +14,7 @@ class CreateMomobankTable extends Migration
     public function up()
     {
         Schema::connection('momonation')->create('momobank', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->bigInteger('raw')->min(0);

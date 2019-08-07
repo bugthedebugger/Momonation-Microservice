@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6bf59bed76b0d486b53c1d630f172b04",
+    "content-hash": "f81484ded004554f41d07488c742b08d",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -1805,6 +1805,52 @@
                 "lumen"
             ],
             "time": "2019-07-30T15:32:45+00:00"
+        },
+        {
+            "name": "laravel/lumen-installer",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/lumen-installer.git",
+                "reference": "9fe7910e703589edd425f799545054d47df49cd6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/lumen-installer/zipball/9fe7910e703589edd425f799545054d47df49cd6",
+                "reference": "9fe7910e703589edd425f799545054d47df49cd6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zip": "*",
+                "guzzlehttp/guzzle": "~6.0",
+                "symfony/console": "~3.0|~4.0",
+                "symfony/process": "~3.0|~4.0"
+            },
+            "bin": [
+                "lumen"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Lumen\\Installer\\Console\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "Lumen application installer.",
+            "keywords": [
+                "laravel",
+                "lumen"
+            ],
+            "time": "2019-04-30T11:58:35+00:00"
         },
         {
             "name": "laravel/passport",

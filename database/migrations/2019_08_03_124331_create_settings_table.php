@@ -14,6 +14,7 @@ class CreateSettingsTable extends Migration
     public function up()
     {
         Schema::connection('momonation')->create('settings', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->integer('daily_transaction_limit');
             $table->integer('momo_transfer_limit');

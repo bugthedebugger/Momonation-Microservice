@@ -7,18 +7,27 @@ use App\Models\Momobank;
 use App\Models\Transaction;
 use App\Models\Feed;
 use App\Models\Setting;
+use Carbon\Carbon;
 
 class BankHelper {
     public static function createBankAccount(User $user) {
         $bank = null;
-        if($user->bank != null) {
-            return $user->bank;
+        try{
+            \DB::beginTransaction();
+            if($user->bank != null) {
+                return $user->bank;
+            }
+            $settings = Setting::first();
+            $bank = $user->bank()->create([
+                'raw' => $settings->initialization_limit,
+                'cooked' => 0,
+            ]);
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollback();
+            \Log::error($e);
+            $bank = null;
         }
-        $settings = Setting::first();
-        $bank = $user->bank()->create([
-            'raw' => $settings->initialization_limit,
-            'cooked' => 0,
-        ]);
         return $bank;
     }     
 
@@ -37,7 +46,7 @@ class BankHelper {
         return $transaction;
     }
 
-    public static function writeTransaction(Momobank $sender = null, Momobank $receiver, $amount, $by_user=false) {
+    public static function writeTransaction(Momobank $sender = null, Momobank $receiver, $amount, $by_user=false, $cooked=false) {
         
         $transaction = -1;
 
@@ -46,6 +55,7 @@ class BankHelper {
             'receiver' => $receiver->user->id,
             'amount' => $amount,
             'by_user' => $by_user,
+            'cooked' => $cooked,
         ]);
 
         return $transaction->id;
@@ -68,7 +78,26 @@ class BankHelper {
 
         $receiver->cooked = $receiver->cooked + $amount;
         $receiver->save();
-        $transaction = BankHelper::writeTransaction(null, $receiver, $amount, false);
+        $transaction = BankHelper::writeTransaction(null, $receiver, $amount, false, true);
+
+        return $transaction;
+    }
+
+    public static function checkDailyLimit(User $user) {
+        $start = Carbon::now();
+        $start->hour = 00;
+        $start->minute = 00;
+        $start->second = 00;
+
+        $end = Carbon::now();
+        $end->hour = 23;
+        $end->minute = 59;
+        $end->second = 59;
+
+        $transaction = $user->receivedTransactions()
+                            ->where('created_at', '>=', $start)
+                            ->where('created_at', '<=', $end)
+                            ->get();
 
         return $transaction;
     }

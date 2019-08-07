@@ -27,6 +27,8 @@ $app->withEloquent();
 
 $app->configure('auth');
 
+$app->configure('database');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
