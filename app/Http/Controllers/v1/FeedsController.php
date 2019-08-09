@@ -24,9 +24,12 @@ class FeedsController extends Controller
         $authUser = Auth::User();
         $rawFeeds = Feed::orderBy('created_at', 'desc')->get();
         $parsedFeeds = [];
+        $authBank = null;
         if ($authUser->bank == null) {
             $authBank = BankHelper::createBankAccount($authUser);
-        } 
+        } else {
+            $authBank = $authUser->bank;
+        }
         foreach($rawFeeds as $f) {
             $likedByMe = false;
             $rawComments = $f->comments;
@@ -58,8 +61,8 @@ class FeedsController extends Controller
 
         $response = [
             'bank' => [
-                'cooked' => $authUser->bank->cooked,
-                'raw' => $authUser->bank->raw,
+                'cooked' => $authBank->cooked,
+                'raw' => $authBank->raw,
             ],
             'feed' => $parsedFeeds,
         ];
