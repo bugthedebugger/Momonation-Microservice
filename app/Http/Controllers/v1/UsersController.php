@@ -4,6 +4,8 @@ namespace App\Http\Controllers\v1;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\HelperClasses\BankHelper;
+use App\Models\Momobank;
+use Auth;
 
 class UsersController extends Controller
 {
@@ -18,7 +20,22 @@ class UsersController extends Controller
     }
 
     public function users() {
-        $users = User::find(2);
-        return response()->json(BankHelper::checkDailyLimit($users));
+        $banks = Momobank::all();
+        $userList = [];
+        foreach($banks as $bank) {
+            if($bank->user_id == Auth::User()->id)
+                continue;
+            
+            $userList[] = [
+                $bank->user->info(),
+            ];
+        }
+
+        $userList = collect($userList)->sortBy('name');
+        $response = [
+            'users' => $userList,
+        ];
+
+        return response()->json($response);
     }
 }
