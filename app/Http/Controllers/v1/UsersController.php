@@ -26,9 +26,7 @@ class UsersController extends Controller
             if($bank->user_id == Auth::User()->id)
                 continue;
             
-            $userList[] = [
-                $bank->user->info(),
-            ];
+            $userList[] = $bank->user->info();
         }
 
         $userList = collect($userList)->sortBy('name');
