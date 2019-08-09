@@ -27,7 +27,6 @@ class MomoBankController extends Controller
         $this->validate(
             $request,
             [
-                'sender' => 'required',
                 'receiver' => 'required',
                 'amount' => 'required',
                 'title' => 'required',
@@ -38,8 +37,6 @@ class MomoBankController extends Controller
         $amount = $request->input('amount');
 
         $authUser = Auth::User();
-        if ($authUser->id != $request->input('sender')) 
-            return response()->json('Sender and Auth User mismatch', 406);
         
         $receiver = User::find($request->input('receiver'));
         if ($receiver == null) 
