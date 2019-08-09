@@ -6,6 +6,7 @@ use App\User;
 use App\Models\Feed;
 use Carbon\Carbon;
 use Auth;
+use App\HelperClasses\BankHelper;
 
 class FeedsController extends Controller
 {
@@ -21,8 +22,11 @@ class FeedsController extends Controller
 
     public function allFeed() {
         $authUser = Auth::User();
-        $rawFeeds = Feed::all();
+        $rawFeeds = Feed::orderBy('created_at', 'desc')->get();
         $parsedFeeds = [];
+        if ($authUser->bank == null) {
+            $authBank = BankHelper::createBankAccount($authUser);
+        } 
         foreach($rawFeeds as $f) {
             $likedByMe = false;
             $rawComments = $f->comments;
@@ -32,7 +36,7 @@ class FeedsController extends Controller
                     'id' => $comment->id,
                     'comment' => $comment->comment,
                     'time' => Carbon::parse($comment->created_at)->toDayDateTimeString(),
-                    'user' => $comment->user,
+                    'user' => $comment->user->info(),
                 ];
             }
             if( $authUser->likes()->where('feed_id', $f->id)->count() > 0)
@@ -46,11 +50,20 @@ class FeedsController extends Controller
                 'amount' => $f->transaction->amount,
                 'likes' => $f->likeCount(),
                 'likedByMe' => $likedByMe,
-                'sender' => $f->senderUser,
-                'receiver' => $f->receiverUser,
+                'sender' => $f->senderUser->info(),
+                'receiver' => $f->receiverUser->info(),
                 'comments' => $parsedComments,
             ];
         }
-        return response()->json($parsedFeeds);
+
+        $response = [
+            'bank' => [
+                'cooked' => $authUser->bank->cooked,
+                'raw' => $authUser->bank->raw,
+            ],
+            'feed' => $parsedFeeds,
+        ];
+
+        return response()->json($response);
     }
 }

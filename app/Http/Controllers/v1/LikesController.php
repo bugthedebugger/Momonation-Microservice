@@ -36,13 +36,13 @@ class LikesController extends Controller
         }
 
         try {
-            \DB::beginTransaction();
+            \DB::connection('momonation')->beginTransaction();
             $feed->likes()->create([
                 'user_id' => Auth::User()->id,
             ]);
-            \DB::commit();
+            \DB::connection('momonation')->commit();
         } catch (\Exception $e) {
-            \DB::rollback();
+            \DB::connection('momonation')->rollback();
             return response()->json('Something went wrong', 500);
         }
 
@@ -69,11 +69,11 @@ class LikesController extends Controller
         }
 
         try {
-            \DB::beginTransaction();
+            \DB::connection('momonation')->beginTransaction();
             $userLike->delete();
-            \DB::commit();
+            \DB::connection('momonation')->commit();
         } catch (\Exception $e) {
-            \DB::rollback();
+            \DB::connection('momonation')->rollback();
             return response()->json('Something went wrong', 500);
         }
 

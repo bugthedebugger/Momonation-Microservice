@@ -9,6 +9,7 @@ class Transaction extends MomonationBaseModel {
         'receiver',
         'amount',
         'by_user',
+        'cooked',
     ];
 
     public function sender() {

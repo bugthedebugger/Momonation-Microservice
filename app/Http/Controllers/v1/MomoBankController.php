@@ -9,6 +9,7 @@ use App\User;
 use Auth;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+use App\Models\Setting;
 
 class MomoBankController extends Controller
 {
@@ -68,22 +69,17 @@ class MomoBankController extends Controller
         if ($receiverBank == null)
             return response()->json('Could not find receiver bank account.', 500);
 
-        /*
-        try{
-            \DB::beginTransaction();
-            $transaction = BankHelper::transfer($authBank, $receiverBank, $amount);
-            if ($transaction != -1) {
-                BankHelper::writeFeed($authUser, $receiver, $request->input('title'), 
-                    $request->input('description'), $transaction);
-            } 
-            \DB::rollback();
-        } catch (\Exception $e) {
-            \DB::rollback();
-            \Log::error($e);
-            return response()->json('Could not deliver the Mo:Mo', 500);
+        if (BankHelper::checkTransferLimit($amount) == false) {
+            return response()->json('Transaction limit is '.
+                Setting::first()->momo_transfer_limit.
+                ' mo:mo at a time.', 500);
         }
-        */
-        DB::beginTransaction();
+
+        if (BankHelper::checkDailyLimit($receiver) == false) {
+            return response()->json('Daily limit for transactions reached.', 500);
+        }
+        
+        DB::connection('momonation')->beginTransaction();
         try {
             if($authBank->raw < $amount)
                 return response()->json('You do not have enough raw Mo:Mo', 406);
@@ -100,16 +96,17 @@ class MomoBankController extends Controller
             ]);
             $transaction->feed()->create([
                 'sender' => $authUser->id,
-                'receiver' => null,
+                'receiver' => $receiver->id,
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
             ]);
-            DB::commit();
+            DB::connection('momonation')->commit();
         } catch (\Exception $e) {
-            DB::rollback();
+            DB::connection('momonation')->rollback();
             \Log::error($e);
             return response()->json('Could not deliver the Mo:Mo', 500);
         }
+        
         return response()->json('Successfully delivered ' . $amount . ' cooked Mo:Mo');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\v1;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\HelperClasses\BankHelper;
 
 class UsersController extends Controller
 {
@@ -17,7 +18,7 @@ class UsersController extends Controller
     }
 
     public function users() {
-        $users = User::find(1)->asSenderFeed;
-        return response()->json($users);
+        $users = User::find(2);
+        return response()->json(BankHelper::checkDailyLimit($users));
     }
 }

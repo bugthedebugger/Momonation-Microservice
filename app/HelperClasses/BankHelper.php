@@ -13,7 +13,7 @@ class BankHelper {
     public static function createBankAccount(User $user) {
         $bank = null;
         try{
-            \DB::beginTransaction();
+            \DB::connection('momonation')->beginTransaction();
             if($user->bank != null) {
                 return $user->bank;
             }
@@ -22,11 +22,13 @@ class BankHelper {
                 'raw' => $settings->initialization_limit,
                 'cooked' => 0,
             ]);
-            \DB::commit();
+            $transaction = BankHelper::writeTransaction(null, $bank, $settings->initialization_limit, false, false);
+            \DB::connection('momonation')->commit();
         } catch (\Exception $e) {
-            \DB::rollback();
+            \DB::connection('momonation')->rollback();
             \Log::error($e);
             $bank = null;
+            throw \Exception($e);
         }
         return $bank;
     }     
@@ -41,7 +43,7 @@ class BankHelper {
         $receiver->save();
         $sender->raw = $sender->raw - $amount;
         $sender->save();
-        $transaction = BankHelper::writeTransaction($sender, $receiver, $amount, true);
+        $transaction = BankHelper::writeTransaction($sender, $receiver, $amount, true, true);
 
         return $transaction;
     }
@@ -94,11 +96,21 @@ class BankHelper {
         $end->minute = 59;
         $end->second = 59;
 
-        $transaction = $user->receivedTransactions()
+        $transactionCount = $user->receivedTransactions()
                             ->where('created_at', '>=', $start)
                             ->where('created_at', '<=', $end)
-                            ->get();
+                            ->where('cooked', true)
+                            ->count();
 
-        return $transaction;
+        $setting = Setting::first();
+
+        return $transactionCount < $setting->daily_transaction_limit?true: false;
+    }
+
+    public static function checkTransferLimit($amount) {
+        if ($amount <= Setting::first()->momo_transfer_limit) 
+            return true;
+        else 
+            return false;
     }
 }

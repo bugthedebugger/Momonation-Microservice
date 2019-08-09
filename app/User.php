@@ -33,6 +33,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password', 'remember_token', 'admin', 'created_at', 'updated_at', 'priviege_id', 'verified',
     ];
 
+    public function social()
+    {
+        return $this->hasMany('App\Models\SocialAuth');
+    }
+
     public function asSenderFeed() {
         return $this->hasMany('App\Models\Feed', 'sender');
     }
@@ -55,5 +60,24 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function receivedTransactions() {
         return $this->hasMany('App\Models\Transaction', 'receiver');
+    }
+
+    public function info() {
+        if($this->social()->count() != 0)
+        {
+            return [
+                'id' => $this->id,
+                'name' => $this->name,
+                'email' => $this->email,
+                'avatar' => $this->social()->first()->avatar,
+            ];
+        } else {
+            return [
+                'id' => $this->id,
+                'name' => $this->name,
+                'email' => $this->email,
+                'avatar' => null,
+            ];
+        }
     }
 }

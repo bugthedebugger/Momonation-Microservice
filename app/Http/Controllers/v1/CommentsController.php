@@ -29,7 +29,7 @@ class CommentsController extends Controller
         );
 
         try {
-            \DB::beginTransaction();
+            \DB::connection('momonation')->beginTransaction();
             $feed = Feed::find($request->input('feed_id'));
             if ($feed == null)
                 return response()->json('Invalid feed id', 500);
@@ -37,9 +37,9 @@ class CommentsController extends Controller
                 'comment' => $request->input('comment'),
                 'user_id' => Auth::User()->id
             ]);
-            \DB::commit();
+            \DB::connection('momonation')->commit();
         } catch (\Exception $e) {
-            \DB::rollback();
+            \DB::connection('momonation')->rollback();
             return response()->json('Something went wrong', 500);
         }
 
