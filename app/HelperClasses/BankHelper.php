@@ -28,7 +28,7 @@ class BankHelper {
             \DB::connection('momonation')->rollback();
             \Log::error($e);
             $bank = null;
-            throw \Exception($e);
+            throw new \Exception($e);
         }
         return $bank;
     }     
