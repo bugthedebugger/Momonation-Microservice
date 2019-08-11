@@ -7,6 +7,8 @@ use App\Models\Feed;
 use Carbon\Carbon;
 use Auth;
 use App\HelperClasses\BankHelper;
+use Transaction;
+use App\Models\Momobank;
 
 class FeedsController extends Controller
 {
@@ -23,6 +25,8 @@ class FeedsController extends Controller
     public function allFeed() {
         $authUser = Auth::User();
         $rawFeeds = Feed::orderBy('created_at', 'desc')->get();
+        $leaderboard = [];
+        $unparsedLeaderBoard = [];
         $parsedFeeds = [];
         $authBank = null;
         if ($authUser->bank == null) {
@@ -59,12 +63,19 @@ class FeedsController extends Controller
             ];
         }
 
+        $rawTransactions = collect();
+        foreach(Momobank::all() as $bank) {
+            $rawTransactions->push($bank->user->info());
+        }
+        $leaderboard = $rawTransactions->sortByDesc('momo')->values()->take(10);
+
         $response = [
             'bank' => [
                 'cooked' => $authBank->cooked,
                 'raw' => $authBank->raw,
             ],
             'feed' => $parsedFeeds,
+            'leaderboard' => $leaderboard,
         ];
 
         return response()->json($response);

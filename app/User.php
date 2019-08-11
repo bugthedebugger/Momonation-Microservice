@@ -8,6 +8,7 @@ use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Carbon\Carbon;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -70,6 +71,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 'name' => $this->name,
                 'email' => $this->email,
                 'avatar' => $this->social()->first()->avatar,
+                'momo' => $this->receivedTransactions()
+                                ->where('created_at', '>=', Carbon::now()->startOfMonth())
+                                ->where('created_at', '<=', Carbon::now()->endOfMonth())
+                                ->where('cooked', true)
+                                ->sum('amount'),
             ];
         } else {
             return [
@@ -77,6 +83,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 'name' => $this->name,
                 'email' => $this->email,
                 'avatar' => null,
+                'momo' => 0,
             ];
         }
     }

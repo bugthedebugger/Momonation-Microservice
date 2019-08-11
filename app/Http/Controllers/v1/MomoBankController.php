@@ -42,6 +42,9 @@ class MomoBankController extends Controller
         if ($receiver == null) 
             return response()->json('Receiver does not exist in our database', 512);
 
+        if ($receiver->id == $authUser->id)
+            return response()->json('You can\'t do that, that\'s cheating!', 512);
+
         $authBank = null;
         $receiverBank = null;
 
