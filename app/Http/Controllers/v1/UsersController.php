@@ -28,9 +28,9 @@ class UsersController extends Controller
             
             $userList->push($bank->user->info());
         }
-        return response()->json($userList);
+        // return response()->json($userList);
         $userList = collect($userList)->sortBy('name');
-        dd($userList);
+        // dd($userList);
         $response = [
             'users' => $userList,
         ];
