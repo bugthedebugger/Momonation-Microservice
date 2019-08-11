@@ -28,7 +28,6 @@ class UsersController extends Controller
             
             $userList[] = $bank->user->info();
         }
-
         $userList = collect($userList)->sortBy('name');
         $response = [
             'users' => $userList,
