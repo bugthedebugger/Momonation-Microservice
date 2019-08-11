@@ -71,7 +71,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 'name' => $this->name,
                 'email' => $this->email,
                 'avatar' => $this->social()->first()->avatar,
-                'momo' => $this->receivedTransactions()
+                'momo' => (int)$this->receivedTransactions()
                                 ->where('created_at', '>=', Carbon::now()->startOfMonth())
                                 ->where('created_at', '<=', Carbon::now()->endOfMonth())
                                 ->where('cooked', true)
