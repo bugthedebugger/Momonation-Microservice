@@ -21,12 +21,12 @@ class UsersController extends Controller
 
     public function users() {
         $banks = Momobank::all();
-        $userList = [];
+        $userList = collect([]);
         foreach($banks as $bank) {
             if($bank->user_id == Auth::User()->id)
                 continue;
             
-            $userList[] = $bank->user->info();
+            $userList->push($bank->user->info());
         }
         dd($userList);
         $userList = collect($userList)->sortBy('name');
