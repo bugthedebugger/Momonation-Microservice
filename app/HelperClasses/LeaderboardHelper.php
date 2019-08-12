@@ -62,7 +62,6 @@ class LeaderboardHelper {
             LeaderboardHelper::createLeaderboardEntry();
         }
 
-        $oldLeaderboardUsers = collect($leaderboard->users)->pluck('id');
         $newLeaderboardUsers = collect(LeaderboardHelper::leaderboardUsers(5))->pluck('id');
         try{
             \DB::connection('momonation')->beginTransaction();
