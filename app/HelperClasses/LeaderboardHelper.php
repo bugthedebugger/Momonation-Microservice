@@ -56,11 +56,12 @@ class LeaderboardHelper {
     public static function updateLeaderboard() {
         $today = Carbon::now();
         $date = $today->monthName . ' ' . $today->year;
-        $leaderboard = Leaderboard::where('date', $date)->first();
 
         if(!LeaderboardHelper::thisMonthLeaderboardExists()) {
             LeaderboardHelper::createLeaderboardEntry();
         }
+
+        $leaderboard = Leaderboard::where('date', $date)->first();
 
         $newLeaderboardUsers = collect(LeaderboardHelper::leaderboardUsers(5))->pluck('id');
         try{
