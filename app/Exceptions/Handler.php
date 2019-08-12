@@ -46,21 +46,9 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         \Log::error($exception);
-        if ($exception instanceof HttpResponseException) {
-            return $exception->getResponse();
-        } elseif ($exception instanceof ModelNotFoundException) {
-            $e = new NotFoundHttpException($exception->getMessage(), $exception);
-        } elseif ($exception instanceof AuthenticationException) {
-            return $this->unauthenticated($request, $exception);
-        } elseif ($exception instanceof AuthorizationException) {
-            $exception = new HttpException(403, $exception->getMessage());
-        } elseif ($exception instanceof ValidationException && $exception->getResponse()) {
-            return $exception->getResponse();
+        if ($request->wantsJson() && $exception instanceof ModelNotFoundException) {
+            return response()->json($exception->getMessage(), 404);
         }
-
-        // if ($request->wantsJson() && $exception instanceof ModelNotFoundException) {
-        //     return response()->json($exception->getMessage(), 404);
-        // }
-        // return response()->json($exception->getMessage(), 500);
+        return response()->json($exception->getMessage(), 500);
     }
 }
