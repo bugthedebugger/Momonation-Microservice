@@ -28,6 +28,6 @@ class CreateLeaderboardsUsersTable extends Migration
      */
     public function down()
     {
-        Schema::connection('momonation')->dropIfExists('leaderboards_users');
+        Schema::connection('momonation')->dropIfExists('leaderboard_user');
     }
 }
