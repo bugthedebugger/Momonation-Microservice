@@ -41,6 +41,7 @@ class LeaderboardHelper {
             \DB::commit();
         } catch (\Exception $e) {
             \DB::connection('momonation')->rollback();
+            \Log::error($e);
             throw new \Exception($e);
         }
     }
@@ -69,6 +70,7 @@ class LeaderboardHelper {
             \DB::connection('momonation')->commit();
         } catch (\Exception $e) {
             \DB::connection('momonation')->rollback();
+            \Log::error($e);
         }
         $leaderboard = Leaderboard::where('date', $date)->first();
         $users = $leaderboard->users;
