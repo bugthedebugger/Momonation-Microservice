@@ -6,6 +6,9 @@ use App\User;
 use App\HelperClasses\BankHelper;
 use App\Models\Momobank;
 use Auth;
+use App\Models\Leaderboard;
+use Carbon\Carbon;
+use App\HelperClasses\LeaderboardHelper;
 
 class UsersController extends Controller
 {
@@ -36,5 +39,19 @@ class UsersController extends Controller
         ];
 
         return response()->json($response);
+    }
+
+    public function test() {
+        // $user = User::find(3);
+        return response()->json(LeaderboardHelper::leaderboardUsers(2));
+        // $user->leaderboards()
+        // $leaderboards = Leaderboard::create([
+        //     'date' => Carbon::now()->monthName . ' ' . Carbon::now()->year,
+        // ]);
+
+        // $leaderBoard = Leaderboard::find(1);
+        // return response()->json($leaderBoard->users);
+        // $user->leaderboards()->attach($leaderBoard->id);
+        // $leaderBoard->users()->detach(2);
     }
 }

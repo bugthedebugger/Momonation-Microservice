@@ -87,4 +87,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ];
         }
     }
+
+    public function leaderboards() {
+        return $this->belongsToMany('App\Models\Leaderboard');
+    }
 }
