@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\v1;
-use App\Http\Controllers\Controller;
-use App\HelperClasses\BankHelper;
-use App\Models\Momobank;
-use Illuminate\Http\Request;
-use App\User;
 use Auth;
-use App\Models\Transaction;
-use Illuminate\Support\Facades\DB;
+use App\User;
 use App\Models\Setting;
+use App\Models\Momobank;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
+use App\HelperClasses\BankHelper;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Notifications\UserNotification;
 
 class MomoBankController extends Controller
 {
@@ -94,16 +95,24 @@ class MomoBankController extends Controller
                 'by_user' => true,
                 'cooked' => true,
             ]);
-            $transaction->feed()->create([
+            $feed = $transaction->feed()->create([
                 'sender' => $authUser->id,
                 'receiver' => $receiver->id,
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
             ]);
+
+            $receiver->notify(new UserNotification(
+                [
+                    'feed_id' => $feed->id
+                ]
+            ));
+
             DB::connection('momonation')->commit();
         } catch (\Exception $e) {
             DB::connection('momonation')->rollback();
             \Log::error($e);
+            // dd($e);
             return response()->json('Could not deliver the Mo:Mo', 500);
         }
         

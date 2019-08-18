@@ -23,4 +23,5 @@ $router->group(['middleware' => 'auth', 'prefix' => '/api/v1/'], function() use 
     $router->put('/comment', ['as' => 'comment', 'uses' => 'v1\CommentsController@store']);
     $router->put('/feed/like', ['as' => 'feed.like', 'uses' => 'v1\LikesController@like']);
     $router->delete('/feed/unlike', ['as' => 'feed.like', 'uses' => 'v1\LikesController@unlike']);
+    $router->get('/notify/feed/', ['as' => 'feed.notify', 'uses' => 'v1\NotificationController@notifications']);
 });

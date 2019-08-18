@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Notifications\NotificationServiceProvider;
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
@@ -81,7 +83,7 @@ $app->routeMiddleware([
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
@@ -105,5 +107,13 @@ $app->router->group([
 ], function ($router) {
     require __DIR__.'/../routes/web.php';
 });
+
+
+//FOR NOTIFICATION
+$app->register(Illuminate\Notifications\NotificationServiceProvider::class);
+$app->withFacades(true, [
+    'Illuminate\Support\Facades\Notification' => 'Notification',
+]);
+$app->alias('mailer', \Illuminate\Contracts\Mail\Mailer::class);
 
 return $app;

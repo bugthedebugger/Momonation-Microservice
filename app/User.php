@@ -2,19 +2,21 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Carbon\Carbon;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable, HasApiTokens;
 
     protected $connection = 'mysql';
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
