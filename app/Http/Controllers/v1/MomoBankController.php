@@ -102,6 +102,7 @@ class MomoBankController extends Controller
                 'description' => $request->input('description'),
             ]);
 
+            //NOTIFY USER
             $receiver->notify(new UserNotification(
                 [
                     'feed_id' => $feed->id
