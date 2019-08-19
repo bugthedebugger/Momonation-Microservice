@@ -11,6 +11,7 @@ use App\HelperClasses\BankHelper;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Notifications\UserNotification;
+use App\HelperClasses\LeaderboardHelper;
 
 class MomoBankController extends Controller
 {
