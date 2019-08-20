@@ -1,9 +1,10 @@
 <?php
 namespace App\Notifications;
 
+use App\Models\Feed;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class UserNotification extends Notification
 {
@@ -16,6 +17,7 @@ class UserNotification extends Notification
     public function __construct($data)
     {	
        $this->data = $data;
+       $this->feed = Feed::findOrFail($this->data['feed_id']);
     }
 /**
  * Get the notification's delivery channels.
@@ -25,7 +27,7 @@ class UserNotification extends Notification
  */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['database', 'mail'];
     }
 /**
  * Get the mail representation of the notification.
@@ -36,7 +38,12 @@ class UserNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('User Notifications!');
+        ->subject('User Notifications! '. $this->feed->senderUser->name)
+        // ->line($this->feed->receiverUser->name. ' send you'. $this->feed->transaction->amount. ' momo')
+        ->from('wasp@karkhana.asia', 'wasp')
+        ->markdown('mail.usernotification', [
+                'feed' => $this->feed
+                ]);
     }
 
     public function toArray($notifiable)
