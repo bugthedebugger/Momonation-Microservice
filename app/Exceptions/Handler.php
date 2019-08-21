@@ -46,9 +46,22 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         \Log::error($exception);
-        if ($request->wantsJson() && $exception instanceof ModelNotFoundException) {
-            return response()->json($exception->getMessage(), 404);
+        // if ($request->wantsJson() && $exception instanceof ModelNotFoundException) {
+        //     return response()->json($exception->getMessage(), 404);
+        // }
+
+        // dd($exception);
+
+        try{
+            if($exception->getStatusCode() == 404)
+                return response()->json('404 not found.', $exception->getStatusCode());
+            
+            else if($exception->getMessage() == '') 
+                return response()->json($exception->getTrace(), $exception->getStatusCode());
+                    
+            return response()->json($exception->getMessage(), $exception->getStatusCode());
+        }catch(\Throwable $e){
+            return response()->json($exception->getMessage(), 500);
         }
-        return response()->json($exception->getMessage(), 500);
     }
 }
