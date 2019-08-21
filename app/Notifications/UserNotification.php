@@ -38,10 +38,10 @@ class UserNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->subject('User Notifications! '. $this->feed->senderUser->name)
-        // ->line($this->feed->receiverUser->name. ' send you'. $this->feed->transaction->amount. ' momo')
-        ->from('wasp@karkhana.asia', 'wasp')
-        ->markdown('mail.usernotification', [
+            ->subject('User Notifications! '. $this->feed->senderUser->name)
+            // ->line($this->feed->receiverUser->name. ' send you'. $this->feed->transaction->amount. ' momo')
+            ->from('wasp@karkhana.asia', 'wasp')
+            ->markdown('mail.usernotification', [
                 'feed' => $this->feed
                 ]);
     }
