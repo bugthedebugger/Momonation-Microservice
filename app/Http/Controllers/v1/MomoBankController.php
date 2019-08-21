@@ -11,6 +11,8 @@ use App\HelperClasses\BankHelper;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Notifications\UserNotification;
+use Kreait\Firebase\Factory;
+use Illuminate\Support\Facades\File;
 
 class MomoBankController extends Controller
 {
@@ -19,9 +21,16 @@ class MomoBankController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Factory $firebase)
     {
-        //
+        // dd($firebase);
+    }
+
+    public function test(){
+        // $serviceAccount = ServiceAccount::fromJsonFile('/storage/app/public/BeeCreativeManagementLocal.json');
+        dd(File::exists('/storage/app/public/BeeCreativeManagementLocal.json'));
+        dd($serviceAccount);
+        dd('asd');
     }
 
     public function transfer(Request $request) {
