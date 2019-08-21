@@ -40,7 +40,7 @@ class UserNotification extends Notification
         return (new MailMessage)
             ->subject('You have been appreciated!!')
             // ->line($this->feed->receiverUser->name. ' send you'. $this->feed->transaction->amount. ' momo')
-            ->from('wasp@karkhana.asia', 'wasp')
+            // ->from('wasp@karkhana.asia', 'wasp')
             ->markdown('mail.usernotification', [
                 'feed' => $this->feed
                 ]);
