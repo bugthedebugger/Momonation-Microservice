@@ -7,12 +7,15 @@ use App\Models\Setting;
 use App\Models\Momobank;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Kreait\Firebase\Factory;
 use App\HelperClasses\BankHelper;
 use Illuminate\Support\Facades\DB;
+use Kreait\Firebase\ServiceAccount;
 use App\Http\Controllers\Controller;
-use App\Notifications\UserNotification;
-use Kreait\Firebase\Factory;
 use Illuminate\Support\Facades\File;
+use App\Notifications\UserNotification;
+use Illuminate\Support\Facades\Storage;
+use Kreait\Firebase\Messaging\CloudMessage;
 
 class MomoBankController extends Controller
 {
@@ -27,8 +30,21 @@ class MomoBankController extends Controller
     }
 
     public function test(){
-        // $serviceAccount = ServiceAccount::fromJsonFile('/storage/app/public/BeeCreativeManagementLocal.json');
-        dd(File::exists('/storage/app/public/BeeCreativeManagementLocal.json'));
+        $serviceAccount = ServiceAccount::fromJson(Storage::disk('public')->get('firebaseKarkhanaService.json'));
+        $firebase = (new Factory)
+                ->withServiceAccount($serviceAccount)
+                // The following line is optional if the project id in your credentials file
+                // is identical to the subdomain of your Firebase project. If you need it,
+                // make sure to replace the URL with the URL of your project.
+                ->create();
+
+        $messaging = $firebase->getMessaging();
+        $topic = 'a-topic';
+        $message = CloudMessage::withTarget('topic', $topic);
+        // dd($message);
+        $messaging->send($message);
+        dd($message);
+        // dd(Storage::disk('public')->get('BeeCreativeManagementLocal.json'));
         dd($serviceAccount);
         dd('asd');
     }
