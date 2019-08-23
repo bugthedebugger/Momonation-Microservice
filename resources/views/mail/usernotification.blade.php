@@ -7,9 +7,9 @@
 	<div style="float: left;margin-left: 30px;">
 		<br>
 		Hello {{$feed->receiverUser->name}},
-		<br>
+		<br><br>
 		<p>
-			{{$feed->senderUser->name}} send you {{$feed->transaction->amount}} momo(s)
+			You received {{$feed->transaction->amount}} momo(s) from {{$feed->senderUser->name}}.
 		</p>
 		Regards,
 		{{env('MAIL_FROM_NAME')}}

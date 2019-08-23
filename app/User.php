@@ -93,4 +93,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function leaderboards() {
         return $this->belongsToMany('App\Models\Leaderboard');
     }
+
+    public function routeNotificationForSlack($notification)
+    {
+        return env('SLACK_WEBHOOK');
+    }
 }

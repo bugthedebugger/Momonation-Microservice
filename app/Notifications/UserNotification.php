@@ -5,6 +5,7 @@ use App\Models\Feed;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\SlackMessage;
 
 class UserNotification extends Notification
 {
@@ -27,7 +28,7 @@ class UserNotification extends Notification
  */
     public function via($notifiable)
     {
-        return ['database', 'mail'];
+        return ['database', 'mail', 'slack'];
     }
 /**
  * Get the mail representation of the notification.
@@ -51,5 +52,22 @@ class UserNotification extends Notification
         return [
 	        'feed_id' => $this->data['feed_id'],
     	];
+    }
+
+    public function toSlack($notifiable)
+    {
+        \Log::info('Inside slack function');
+        return (new SlackMessage)
+                    ->success()
+                    ->attachment(function ($attachment) {
+                        $attachment->title('Appreciation alert! :momo:')
+                                ->fields([
+                                        'Sender' => $this->feed->senderUser->name,
+                                        'Receiver' => $this->feed->receiverUser->name,
+                                        'Title' => $this->feed->title,
+                                        'With' => $this->feed->transaction->amount . ' :momo:',
+                                        'For' => $this->feed->description,
+                                    ]);
+                    });
     }
 }
