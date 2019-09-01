@@ -118,7 +118,7 @@ class LeaderboardHelper {
             $users = $l->users;
             $userInfos = collect();
             foreach($users as $user) {
-                $userInfos->push($user->info());
+                $userInfos->push($user->info($l->date));
             }
             $min = $userInfos->min('momo');
             $max = $userInfos->max('momo');
