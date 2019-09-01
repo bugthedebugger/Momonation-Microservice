@@ -34,9 +34,8 @@ class LeaderboardHelper {
         $userInfos = collect();
 
         foreach($userIDs as $userID) {
-            $userInfos->push(User::find($userID)->info());
+            $userInfos->push(User::find($userID)->info($otherDate));
         }
-
         return $userInfos->sortByDesc('momo')->take($number)->values();
     }
 
@@ -87,7 +86,7 @@ class LeaderboardHelper {
 
         $leaderboard = Leaderboard::where('date', $date)->first();
 
-        $newLeaderboardUsers = collect(LeaderboardHelper::leaderboardUsers(5, $month))->pluck('id');
+        $newLeaderboardUsers = collect(LeaderboardHelper::leaderboardUsers(5, $date))->pluck('id');
         try{
             \DB::connection('momonation')->beginTransaction();
             $leaderboard->users()->sync($newLeaderboardUsers);
@@ -100,7 +99,7 @@ class LeaderboardHelper {
         $users = $leaderboard->users;
         $userInfo = collect();
         foreach($users as $user) {
-            $userInfo->push($user->info());
+            $userInfo->push($user->info($date));
         }
         return [
             'users' => $userInfo->values(),
