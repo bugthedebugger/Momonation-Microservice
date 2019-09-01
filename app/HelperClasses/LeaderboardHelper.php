@@ -12,11 +12,21 @@ use App\Models\Leaderboard;
 
 
 class LeaderboardHelper { 
-    public static function leaderboardUsers($number) {
-        $transactions = Transaction::where('created_at', '>=', Carbon::now()->startOfMonth())
+    public static function leaderboardUsers($number, $otherDate=null) {
+        if($otherDate == null)
+        {
+            $transactions = Transaction::where('created_at', '>=', Carbon::now()->startOfMonth())
                                     ->where('created_at', '<=', Carbon::now()->endOfMonth())
                                     ->where('cooked', true)
                                     ->get();
+        } else {
+            $startDate = Carbon::parse($otherDate)->startOfMonth();
+            $endDate = Carbon::parse($otherDate)->endOfMonth();
+            $transactions = Transaction::where('created_at', '>=', $startDate)
+                                    ->where('created_at', '<=', $endDate)
+                                    ->where('cooked', true)
+                                    ->get();
+        }
         if ($transactions == null) {
             return [];
         }
@@ -30,15 +40,18 @@ class LeaderboardHelper {
         return $userInfos->sortByDesc('momo')->take($number)->values();
     }
 
-    public static function createLeaderboardEntry() {
+    public static function createLeaderboardEntry($month=null) {
         try{
             \DB::connection('momonation')->beginTransaction();
             $today = Carbon::now();
-            $date = $today->monthName . ' ' . $today->year;
+            if($month == null)
+                $date = $today->monthName . ' ' . $today->year;
+            else
+                $date = $month;
             Leaderboard::create([
                 'date' => $date,
             ]);
-            \DB::commit();
+            \DB::connection('momonation')->commit();
         } catch (\Exception $e) {
             \DB::connection('momonation')->rollback();
             \Log::error($e);
@@ -46,24 +59,35 @@ class LeaderboardHelper {
         }
     }
 
-    public static function thisMonthLeaderboardExists() {
+    public static function thisMonthLeaderboardExists($month=null) {
         $today = Carbon::now();
-        $date = $today->monthName . ' ' . $today->year;
+        if ($month == null)
+            $date = $today->monthName . ' ' . $today->year;
+        else 
+            $date = $month;
         $leaderboard = Leaderboard::where('date', $date)->first();
         return $leaderboard != null;
     }
 
-    public static function updateLeaderboard() {
+    public static function updateLeaderboard($month = null) {
         $today = Carbon::now();
-        $date = $today->monthName . ' ' . $today->year;
-
-        if(!LeaderboardHelper::thisMonthLeaderboardExists()) {
-            LeaderboardHelper::createLeaderboardEntry();
+        if ($month == null) {
+            $date = $today->monthName . ' ' . $today->year;
+            if(!LeaderboardHelper::thisMonthLeaderboardExists()) {
+                LeaderboardHelper::createLeaderboardEntry();
+            }
         }
+        else {
+            $date = $month;
+            if(!LeaderboardHelper::thisMonthLeaderboardExists($date)) {
+                LeaderboardHelper::createLeaderboardEntry($date);
+            }
+        }
+
 
         $leaderboard = Leaderboard::where('date', $date)->first();
 
-        $newLeaderboardUsers = collect(LeaderboardHelper::leaderboardUsers(5))->pluck('id');
+        $newLeaderboardUsers = collect(LeaderboardHelper::leaderboardUsers(5, $month))->pluck('id');
         try{
             \DB::connection('momonation')->beginTransaction();
             $leaderboard->users()->sync($newLeaderboardUsers);
@@ -112,5 +136,9 @@ class LeaderboardHelper {
         return [
             'leaderboards' => $leaderboard->values()
         ];
+    }
+
+    public function fixLeaderboard($date) {
+
     }
 }

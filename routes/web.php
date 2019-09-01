@@ -26,4 +26,5 @@ $router->group(['middleware' => 'auth', 'prefix' => '/api/v1/'], function() use 
     $router->get('/notify/feed/', ['as' => 'feed.notify', 'uses' => 'v1\NotificationController@notifications']);
     $router->get('/leaderboard', ['as' => 'leaderboard', 'uses' => 'v1\LeaderboardsController@leaderboard']);
     $router->get('/test', ['as' => 'test', 'uses' => 'v1\UsersController@test']);
+    $router->get('/fix/leaderboard', ['as' => 'fix.leaderboard', 'uses' => 'v1\LeaderboardsController@fixLeaderboard']);
 });

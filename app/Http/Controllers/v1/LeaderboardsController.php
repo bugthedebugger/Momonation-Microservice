@@ -24,4 +24,8 @@ class LeaderboardsController extends Controller
     public function leaderboard() {
         return response()->json(LeaderboardHelper::getLeaderboard());
     }
+
+    public function fixLeaderboard() {
+        return response()->json(LeaderboardHelper::updateLeaderboard('August 2019'));
+    }
 }
