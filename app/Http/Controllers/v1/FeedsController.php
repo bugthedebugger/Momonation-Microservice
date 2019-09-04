@@ -25,7 +25,7 @@ class FeedsController extends Controller
 
     public function allFeed() {
         $authUser = Auth::User();
-        $rawFeeds = Feed::orderBy('created_at', 'desc')->take(10)->get();
+        $rawFeeds = Feed::orderBy('created_at', 'desc')->take(15)->get();
         $parsedFeeds = [];
         $authBank = null;
         if ($authUser->bank == null) {
