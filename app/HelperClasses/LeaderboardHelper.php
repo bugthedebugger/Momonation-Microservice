@@ -86,7 +86,7 @@ class LeaderboardHelper {
 
         $leaderboard = Leaderboard::where('date', $date)->first();
 
-        $newLeaderboardUsers = collect(LeaderboardHelper::leaderboardUsers(5, $date))->pluck('id');
+        $newLeaderboardUsers = collect(LeaderboardHelper::leaderboardUsers(10, $date))->pluck('id');
         try{
             \DB::connection('momonation')->beginTransaction();
             $leaderboard->users()->sync($newLeaderboardUsers);
@@ -119,6 +119,7 @@ class LeaderboardHelper {
             foreach($users as $user) {
                 $userInfos->push($user->info($l->date));
             }
+            $userInfos = $userInfos->sortByDesc('momo');
             $min = $userInfos->min('momo');
             $max = $userInfos->max('momo');
             $date = $l->date;
