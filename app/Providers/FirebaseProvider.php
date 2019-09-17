@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Providers\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
+use Kreait\Firebase;
+use Storage;
 
 class FirebaseProvider extends ServiceProvider
 {
@@ -25,17 +27,17 @@ class FirebaseProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton(Factory::class, function ($app)
+        $this->app->singleton(Firebase::class, function ($app)
         {
-            $serviceAccount = ServiceAccount::fromJsonFile('/storage/app/public/BeeCreativeManagementLocal.json');
+            $serviceAccount = ServiceAccount::fromJson(Storage::disk('public')->get('firebaseKarkhanaService.json'));
             // dd($serviceAccount);
             $firebase = (new Factory)
-                ->withServiceAccount($serviceAccount)
-                // The following line is optional if the project id in your credentials file
-                // is identical to the subdomain of your Firebase project. If you need it,
-                // make sure to replace the URL with the URL of your project.
-                ->create();
-            // dd($firebase);
+                            ->withServiceAccount($serviceAccount)
+                            // The following line is optional if the project id in your credentials file
+                            // is identical to the subdomain of your Firebase project. If you need it,
+                            // make sure to replace the URL with the URL of your project.
+                            ->create();
+
             return $firebase;
 
         });

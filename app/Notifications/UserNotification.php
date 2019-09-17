@@ -28,7 +28,7 @@ class UserNotification extends Notification
  */
     public function via($notifiable)
     {
-        return ['database', 'mail', FirebaseChannel::class];
+        return [FirebaseChannel::class];
     }
 /**
  * Get the mail representation of the notification.
