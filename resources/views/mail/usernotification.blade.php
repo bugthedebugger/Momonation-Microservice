@@ -8,7 +8,10 @@
 		Hello {{$feed->receiverUser->name}},
 		<br>
 		<p>
-			{{$feed->senderUser->name}} send you {{$feed->transaction->amount}} momo(s)
+			{{$feed->senderUser->name}} sent you {{$feed->transaction->amount}} momo(s)
+			<br>
+			{{$feed->title}}
+			{{$feed->description}}
 		</p>
 		Regards,
 		Wasp Team

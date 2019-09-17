@@ -11,7 +11,6 @@
 |
 */
 
-$router->get('test', ['as' => 'test', 'uses' => 'v1\MomoBankController@test']);
 
 $router->group(['middleware' => 'auth', 'prefix' => '/api/v1/'], function() use ($router) {
 
