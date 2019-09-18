@@ -37,8 +37,8 @@ class FirebaseChannel
         try {
             $userTokens = "fZMxf5tq2eE:APA1bE_5z-qAseVaJrAPmNxPC1an-nR40brYfBzwJJcc07ldsc8Ht5Zt94aq_XCpKI_8WmICX-OFuvdhhZh20An0OHEizleF0dY7_C4-CipiJx1GL3Ysc3cDukMgJrXeQWrVA7XAFU1";
             // $message = $notification->toVoice($notifiable);
-            $serviceAccount = ServiceAccount::fromJson(Storage::disk('public')
-                                            ->get('firebaseKarkhanaService.json'));
+            // $serviceAccount = ServiceAccount::fromJson(Storage::disk('public')
+            //                                 ->get('firebaseKarkhanaService.json'));
 
             $config = AndroidConfig::fromArray([
                 'ttl' => '3600s',
