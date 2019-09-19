@@ -10,21 +10,6 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-$router->get('/test', function(){
-    // dd(config('envKeys.firebase.path'));
-    // dd(\Storage::disk('public')->get(env('FCM_PATH')));
-    // $firebase = Illuminate\Support\Facades\App::make( Kreait\Firebase::class);
-    // dd($firebase);
-    $user = App\User::find(5);
-    $feed = App\Models\Feed::find(10);
-    $user->notify(new App\Notifications\UserNotification(
-        [
-            'feed_id' => $feed->id
-        ]
-        ));
-    
-    return $user;
-});
 
 $router->group(['middleware' => 'auth', 'prefix' => '/api/v1/'], function() use ($router) {
 
