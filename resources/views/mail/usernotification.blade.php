@@ -5,16 +5,19 @@
 </head>
 <body>
 	<div style="float: left;margin-left: 30px;">
-		Hello {{$feed->receiverUser->name}},
 		<br>
+		Hello {{$feed->receiverUser->name}},
+		<br><br>
 		<p>
+
 			{{$feed->senderUser->name}} sent you {{$feed->transaction->amount}} momo(s)
 			<br>
 			{{$feed->title}}
 			{{$feed->description}}
+
 		</p>
 		Regards,
-		Wasp Team
+		{{env('MAIL_FROM_NAME')}}
 	</div>
 	
 </body>

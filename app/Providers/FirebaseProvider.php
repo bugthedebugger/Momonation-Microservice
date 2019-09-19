@@ -27,10 +27,13 @@ class FirebaseProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->bind(Firebase::class, function ($app)
+        $this->app->singleton(Firebase::class, function ($app)
         {
-            $serviceAccount = ServiceAccount::fromJson(Storage::disk('public')->get('firebaseKarkhanaService.json'));
-            // dd($serviceAccount);
+            //GET FIREBASE SERVICE ACCOUNT CREDENTIALS
+            $serviceAccount = ServiceAccount::fromJson(
+                                            Storage::disk('public')->get(config('envKeys.firebase.path')
+                                            ));
+
             $firebase = (new Factory)
                             ->withServiceAccount($serviceAccount)
                             // The following line is optional if the project id in your credentials file

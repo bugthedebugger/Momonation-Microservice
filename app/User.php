@@ -65,17 +65,24 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany('App\Models\Transaction', 'receiver');
     }
 
-    public function info() {
+    public function info($date=null) {
         if($this->social()->count() != 0)
         {
+            if ( $date == null ) {
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+            } else {
+                $startDate = Carbon::parse($date)->startOfMonth();
+                $endDate = Carbon::parse($date)->endOfMonth();
+            }
             return [
                 'id' => $this->id,
                 'name' => $this->name,
                 'email' => $this->email,
                 'avatar' => $this->social()->first()->avatar,
                 'momo' => (int)$this->receivedTransactions()
-                                ->where('created_at', '>=', Carbon::now()->startOfMonth())
-                                ->where('created_at', '<=', Carbon::now()->endOfMonth())
+                                ->where('created_at', '>=', $startDate)
+                                ->where('created_at', '<=', $endDate)
                                 ->where('cooked', true)
                                 ->sum('amount'),
             ];
@@ -88,5 +95,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 'momo' => 0,
             ];
         }
+    }
+
+    public function leaderboards() {
+        return $this->belongsToMany('App\Models\Leaderboard');
+    }
+
+    public function routeNotificationForSlack($notification)
+    {
+        return env('SLACK_WEBHOOK');
     }
 }

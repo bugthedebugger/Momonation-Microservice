@@ -76,11 +76,17 @@ class BankHelper {
         return $feed;
     }
 
-    public static function systemTransfer(User $receiver, $amount) {
+    public static function systemTransfer(User $receiver, $amount, $cooked = true) {
 
-        $receiver->cooked = $receiver->cooked + $amount;
-        $receiver->save();
-        $transaction = BankHelper::writeTransaction(null, $receiver, $amount, false, true);
+        if($cooked) {
+            $receiver->bank->cooked = $receiver->bank->cooked + $amount;
+            $receiver->bank>save();
+            $transaction = BankHelper::writeTransaction(null, $receiver->bank, $amount, false, true);
+        } else {
+            $receiver->bank->raw = $receiver->bank->raw + $amount;
+            $receiver->bank->save();
+            $transaction = BankHelper::writeTransaction(null, $receiver->bank, $amount, false, false);
+        }
 
         return $transaction;
     }

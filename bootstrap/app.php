@@ -33,6 +33,8 @@ $app->configure('auth');
 
 $app->configure('database');
 
+$app->configure('envKeys');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -89,6 +91,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
+$app->register(Illuminate\Notifications\SlackChannelServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Providers\FirebaseProvider::class);
 

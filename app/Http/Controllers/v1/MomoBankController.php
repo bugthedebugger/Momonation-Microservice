@@ -11,6 +11,7 @@ use App\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\HelperClasses\LeaderboardHelper;
 
 class MomoBankController extends Controller
 {
@@ -124,6 +125,7 @@ class MomoBankController extends Controller
                 'description' => $request->input('description'),
             ]);
 
+            //NOTIFY USER
             $receiver->notify(new UserNotification(
                 [
                     'feed_id' => $feed->id,

@@ -8,8 +8,8 @@ use Kreait\Firebase;
 use Kreait\Firebase\Exception\Messaging\InvalidMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
-use Log;
 use Kreait\Firebase\Messaging\Notification as FirebaseNotification;
+use Log;
 
 class FirebaseChannel
 {
@@ -34,29 +34,29 @@ class FirebaseChannel
 
     public function send($notifiable, Notification $notification)
     {
+
         try {
-            // $token = 'eXzrtkkmbyM:APA91bG08Fb5seKYEpMPvUx3sti0odedz0UffQJeaL-GEuCT_JpzZ73td1ORg3nBH1kXH36qJNHx1AwqjwlW_MU76ShuaeXY2xwJr5_oOtD7fkUL95sxnyycde32-ONJIQ4brKbcZbzU';
+
+            //GET REGISTRATION TOKEN FROM FIREBASE DATABASE
             $reference = $this->database
                 ->getReference('/RegistrationTokens/' . bin2hex($notifiable->email));
 
+            //GET THE VALUE
             $snapshot = $reference->getSnapshot()->getValue();
 
-            if(!$snapshot || !isset($snapshot['fcm_token']))
-            {
+            //CHECK IF TOKEN EXISTS
+            if (!$snapshot || !isset($snapshot['fcm_token'])) {
                 $userTokens = $snapshot['fcm_token'];
 
                 // $userTokens = $token;
 
-                // $message = $notification->toVoice($notifiable);
-                // $serviceAccount = ServiceAccount::fromJson(Storage::disk('public')
-                //                                 ->get('firebaseKarkhanaService.json'));
-
+                //CREATING NOTIFICATION BODY
                 $config = AndroidConfig::fromArray([
-                    'ttl'          => '3600s',
-                    'priority'     => 'high',
+                    'ttl' => '3600s',
+                    'priority' => 'high',
                     'notification' => [
                         'title' => 'Momonation Notification',
-                        'body'  => $notification->feed->senderUser->name . ' sent you' . $notification->feed->transaction->amount. ' momos',
+                        'body' => $notification->feed->senderUser->name . ' sent you' . $notification->feed->transaction->amount . ' momos',
                     ],
                 ]);
 
@@ -64,32 +64,33 @@ class FirebaseChannel
                 //     'title' => 'Momonation Notification',
                 //     'body'  => $notification->feed->senderUser->name.' sent you'. $notification->feed->transaction->amount
                 // ]);
-
+                
+                //DATA FOR FLUTTER NOTIFICATION
                 $data = ['click_action' => 'FLUTTER_NOTIFICATION_CLICK'];
-
+                
+                //ADDING IMAGE
                 $notification = FirebaseNotification::fromArray([
                     'image' => $notifiable->info()['avatar'],
                 ]);
+                
+                //MESSAGE
                 $message = CloudMessage::withTarget('token', $userTokens)
                     ->withAndroidConfig($config)
                     ->withData($data)
-                    ->withNotification($notification);
-                    // ->withImageUrl($notifiable->info()['avatar']);;
+                    ->withNotification($notification)
+                    ->withImageUrl($notifiable->feed->senderUser->info()['avatar']);
 
                 $messaging = $this->firebase->getMessaging();
-
+                
+                //SEND MESSAGE
                 $responseData = $messaging->send($message);
-            }else{
+            } else {
                 Log::warning('Firebase Notification Error:  Registration Token not availaibe.');
             }
 
-        }
-        catch (InvalidMessage $e)
-        {
+        } catch (InvalidMessage $e) {
             Log::warning('Firebase Notification Error:  ' . $e->errors()['error']['message']);
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             Log::warning('Firebase Notification Error:  ' . $e->getMessage());
         }
 

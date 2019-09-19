@@ -17,20 +17,20 @@ class ExampleController extends Controller
     }
 
     public function notify(Request $request){
-        try {
-            $user = $request->user();
-            $data = [
-                'sender_id' => 1,
-                'receiver_id' => 2,
-                'amount' => 3,
-                'transaction_time' => 'time'
-            ];
+        // try {
+        //     $user = $request->user();
+        //     $data = [
+        //         'sender_id' => 1,
+        //         'receiver_id' => 2,
+        //         'amount' => 3,
+        //         'transaction_time' => 'time'
+        //     ];
             
-            $user->notify(new UserNotification($data));
-            return 'true';
-        } catch (Exception $e) {
-            return 'false';
-        }
+        //     $user->notify(new UserNotification($data));
+        //     return 'true';
+        // } catch (Exception $e) {
+        //     return 'false';
+        // }
         
     }
 }
