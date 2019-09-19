@@ -9,6 +9,7 @@ use Kreait\Firebase\Exception\Messaging\InvalidMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Log;
+use Kreait\Firebase\Messaging\Notification as FirebaseNotification;
 
 class FirebaseChannel
 {
@@ -34,14 +35,17 @@ class FirebaseChannel
     public function send($notifiable, Notification $notification)
     {
         try {
+            // $token = 'eXzrtkkmbyM:APA91bG08Fb5seKYEpMPvUx3sti0odedz0UffQJeaL-GEuCT_JpzZ73td1ORg3nBH1kXH36qJNHx1AwqjwlW_MU76ShuaeXY2xwJr5_oOtD7fkUL95sxnyycde32-ONJIQ4brKbcZbzU';
             $reference = $this->database
                 ->getReference('/RegistrationTokens/' . bin2hex($notifiable->email));
 
             $snapshot = $reference->getSnapshot()->getValue();
 
-            if (!$snapshot || !isset($snapshot['fcm_token']))
+            if(!$snapshot || !isset($snapshot['fcm_token']))
             {
                 $userTokens = $snapshot['fcm_token'];
+
+                // $userTokens = $token;
 
                 // $message = $notification->toVoice($notifiable);
                 // $serviceAccount = ServiceAccount::fromJson(Storage::disk('public')
@@ -52,7 +56,7 @@ class FirebaseChannel
                     'priority'     => 'high',
                     'notification' => [
                         'title' => 'Momonation Notification',
-                        'body'  => $notification->feed->senderUser->name . ' sent you' . $notification->feed->transaction->amount,
+                        'body'  => $notification->feed->senderUser->name . ' sent you' . $notification->feed->transaction->amount. ' momos',
                     ],
                 ]);
 
@@ -63,9 +67,14 @@ class FirebaseChannel
 
                 $data = ['click_action' => 'FLUTTER_NOTIFICATION_CLICK'];
 
+                $notification = FirebaseNotification::fromArray([
+                    'image' => $notifiable->info()['avatar'],
+                ]);
                 $message = CloudMessage::withTarget('token', $userTokens)
                     ->withAndroidConfig($config)
-                    ->withData($data);
+                    ->withData($data)
+                    ->withNotification($notification);
+                    // ->withImageUrl($notifiable->info()['avatar']);;
 
                 $messaging = $this->firebase->getMessaging();
 
