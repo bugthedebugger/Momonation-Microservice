@@ -27,7 +27,7 @@ class FirebaseProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton(Firebase::class, function ($app)
+        $this->app->bind(Firebase::class, function ($app)
         {
             $serviceAccount = ServiceAccount::fromJson(Storage::disk('public')->get('firebaseKarkhanaService.json'));
             // dd($serviceAccount);
