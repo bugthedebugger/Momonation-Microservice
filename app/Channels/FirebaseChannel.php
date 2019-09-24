@@ -34,7 +34,12 @@ class FirebaseChannel
 
     public function send($notifiable, Notification $notification)
     {
+        // $reference = $this->database
+        //         ->getReference('/RegistrationTokens/' . bin2hex($notifiable->email));
 
+        //     //GET THE VALUE
+        //     $snapshot = $reference->getSnapshot()->getValue();
+        // dd($snapshot['fcm_token']);
         try {
 
             //GET REGISTRATION TOKEN FROM FIREBASE DATABASE
@@ -43,9 +48,9 @@ class FirebaseChannel
 
             //GET THE VALUE
             $snapshot = $reference->getSnapshot()->getValue();
-
+            // dd($snapshot);
             //CHECK IF TOKEN EXISTS
-            if (!$snapshot || !isset($snapshot['fcm_token'])) {
+            if ($snapshot && isset($snapshot['fcm_token'])) {
                 $userTokens = $snapshot['fcm_token'];
 
                 // $userTokens = $token;
@@ -56,7 +61,8 @@ class FirebaseChannel
                     'priority' => 'high',
                     'notification' => [
                         'title' => 'Momonation Notification',
-                        'body' => $notification->feed->senderUser->name . ' sent you' . $notification->feed->transaction->amount . ' momos',
+                        'body' => $notification->feed->senderUser->name . ' has appreciated you.' . $notification->feed->transaction->amount . ' momos',
+                        'image' => $notifiable->info()['avatar']
                     ],
                 ]);
 
@@ -71,17 +77,16 @@ class FirebaseChannel
                 //ADDING IMAGE
                 $notification = FirebaseNotification::fromArray([
                     'image' => $notifiable->info()['avatar'],
-                ]);
+                ])->withImageUrl($notifiable->info()['avatar']);
                 
                 //MESSAGE
                 $message = CloudMessage::withTarget('token', $userTokens)
                     ->withAndroidConfig($config)
-                    ->withData($data)
-                    ->withNotification($notification)
-                    ->withImageUrl($notifiable->feed->senderUser->info()['avatar']);
+                    ->withData($data);
+                    // ->withNotification($notification);
 
                 $messaging = $this->firebase->getMessaging();
-                
+                // dd($messaging);
                 //SEND MESSAGE
                 $responseData = $messaging->send($message);
             } else {
