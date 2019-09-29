@@ -80,7 +80,7 @@ class BankHelper {
 
         if($cooked) {
             $receiver->bank->cooked = $receiver->bank->cooked + $amount;
-            $receiver->bank>save();
+            $receiver->bank->save();
             $transaction = BankHelper::writeTransaction(null, $receiver->bank, $amount, false, true);
         } else {
             $receiver->bank->raw = $receiver->bank->raw + $amount;

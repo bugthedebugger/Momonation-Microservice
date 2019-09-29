@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\RawMomoRefill::class,
         Commands\SlackMessage::class,
+        Commands\CookedMomoTransfer::class,
     ];
 
     /**
