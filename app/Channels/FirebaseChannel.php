@@ -61,8 +61,8 @@ class FirebaseChannel
                     'priority' => 'high',
                     'notification' => [
                         'title' => 'Momonation Notification',
-                        'body' => $notification->feed->senderUser->name . ' has appreciated you.' . $notification->feed->transaction->amount . ' momos',
-                        'image' => $notifiable->info()['avatar']
+                        'body' => $notification->feed->senderUser->name . ' has appreciated you.',
+                        'image' => $notification->feed->senderUser->info()['avatar']
                     ],
                 ]);
 
@@ -75,9 +75,9 @@ class FirebaseChannel
                 $data = ['click_action' => 'FLUTTER_NOTIFICATION_CLICK'];
                 
                 //ADDING IMAGE
-                $notification = FirebaseNotification::fromArray([
-                    'image' => $notifiable->info()['avatar'],
-                ])->withImageUrl($notifiable->info()['avatar']);
+                // $notification = FirebaseNotification::fromArray([
+                //     'image' => $notifiable->info()['avatar'],
+                // ])->withImageUrl($notifiable->info()['avatar']);
                 
                 //MESSAGE
                 $message = CloudMessage::withTarget('token', $userTokens)
