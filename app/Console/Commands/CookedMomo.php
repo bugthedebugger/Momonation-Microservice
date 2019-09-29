@@ -9,14 +9,14 @@ use App\Models\Setting;
 use App\HelperClasses\BankHelper;
 use App\Models\Momobank;
  
-class RawMomoRefill extends Command
+class CookedMomoTransfer extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'rawmomo:refill';
+    protected $signature = 'cookedmomo:send {amount}';
  
     /**
      * The console command description.
@@ -40,9 +40,12 @@ class RawMomoRefill extends Command
      *
      * @return mixed
      */
-     public function handle()
+    public function handle()
     {
-        $refillAmount = Setting::first()->auto_refill_limit;
+        $refillLimit = Setting::first()->momo_transfer_limit;
+        $refillAmount = $this->argument('amount');
+        if($refillAmount > $refillLimit)
+            $refillAmount = $refillLimit;
         $momoBanks = Momobank::all();
         try {
             \DB::connection('momonation')->beginTransaction();
@@ -50,11 +53,10 @@ class RawMomoRefill extends Command
                 BankHelper::systemTransfer($bank->user, $refillAmount);
             }
             \DB::connection('momonation')->commit();
-            print("Successfully refilled\n");
+            print("Successfully sent\n");
         } catch (\Exception $e) {
             \DB::connection('momonation')->rollback();
             print($e->getMessage()."\n");
         }
-       
     }
 }
